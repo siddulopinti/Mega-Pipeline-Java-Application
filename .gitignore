@@ -1,0 +1,24 @@
+# Ignore Java compiled files
+*.class
+*.jar
+target/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore Kubernetes cache
+.kube/
+
+# Ignore environment-specific files
+.env
+
+# Ignore sensitive credentials (use Azure Key Vault instead!)
+secrets.yml
+
+# Ignore Docker build artifacts
+docker-compose.override.yml
