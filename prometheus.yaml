@@ -1,0 +1,8 @@
+CI/CD Pipeline
+The Azure DevOps YAML pipeline automates:
+
+Code Checkout (from GitHub)
+Static Code Analysis (SonarQube)
+Build & Push Docker Image
+Deploy to Kubernetes (AKS)
+Enable Monitoring (Prometheus & Grafana)
