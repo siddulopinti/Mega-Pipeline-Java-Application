@@ -1,0 +1,43 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - checkout: self
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'YourSonarCloudServiceConnection'
+        organization: 'your-org'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'your-project-key'
+        cliProjectName: 'Calculator'
+    - script: |
+        echo "Running SonarQube Analysis"
+        sonar-scanner -Dsonar.projectKey=your-project-key -Dsonar.organization=your-org
+      displayName: 'SonarQube Code Analysis'
+    - script: |
+        echo "Building Docker Image"
+        docker build -t youracr.azurecr.io/calculator:latest .
+        docker login youracr.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
+        docker push youracr.azurecr.io/calculator:latest
+      displayName: 'Build and Push Docker Image'
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+    steps:
+    - script: |
+        echo "Deploying to Kubernetes"
+        az aks get-credentials --resource-group your-resource-group --name your-aks-cluster
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml
+        kubectl apply -f kubernetes/prometheus.yaml
+        kubectl apply -f kubernetes/grafana.yaml
+      displayName: 'Deploy to AKS with Monitoring'
